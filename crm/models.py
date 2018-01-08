@@ -32,6 +32,8 @@ class Customer(models.Model):
     consultant = models.ForeignKey('UserProfile', verbose_name="课程顾问", on_delete=models.PROTECT)
     memo = models.TextField(null=True, blank=True, verbose_name="备注")
     date = models.DateTimeField(auto_now_add=True)
+    status_choices = ((0, '已报名'), (1, '未报名'), (2, '已退学'))
+    status = models.SmallIntegerField(choices=status_choices)
 
     def __str__(self):
         return self.qq
