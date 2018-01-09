@@ -26,7 +26,7 @@ def customer_list(request):
     :return:
     '''
     if request.method == "GET":
-        return render(request,'sales/customers.html')
+        return render(request, 'sales/customers.html')
 
     elif request.method == "POST":
         pass
