@@ -14,7 +14,7 @@ class BaseAdmin(object):
 
 
 class CustomerAdmin(BaseAdmin):
-    list_display = ['qq', 'name', 'source', 'consultant', 'consult_course', 'status']
+    list_display = ['qq', 'name', 'source', 'consultant', 'consult_course', 'status', 'date']
 
 
 class CustomerFollowUpAdmin(BaseAdmin):

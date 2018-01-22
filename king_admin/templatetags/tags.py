@@ -5,16 +5,17 @@
 
 from django import template
 from django.utils.safestring import mark_safe
+import datetime
 
 register = template.Library()
 
 
-@register.simple_tag()
+@register.simple_tag
 def render_app_name(admin_class):
     return admin_class.model._meta.verbose_name
 
 
-@register.simple_tag()
+@register.simple_tag
 def get_query_sets(admin_class):
     return admin_class.model.objects.all()
 
@@ -28,5 +29,8 @@ def build_table_row(obj, admin_class):
             column_data = getattr(obj, 'get_%s_display' % column)()
         else:
             column_data = getattr(obj, column)
+
+        if type(column_data).__name__ == "datetime":
+            column_data = column_data.strftime("%Y-%m-%d %H:%M:%S")
         row_ele += "<td>%s</td>" % (column_data)
     return mark_safe(row_ele)
