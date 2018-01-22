@@ -34,3 +34,15 @@ def build_table_row(obj, admin_class):
             column_data = column_data.strftime("%Y-%m-%d %H:%M:%S")
         row_ele += "<td>%s</td>" % (column_data)
     return mark_safe(row_ele)
+
+
+@register.simple_tag
+def render_page_ele(loop_counter, query_sets):
+    if abs(query_sets.number - loop_counter) <= 2:
+        if query_sets.number == loop_counter:
+            ele = """<li class="active"><a href="?page=%s">%s</a></li>""" % (loop_counter, loop_counter)
+        else:
+            ele = """<li><a href="?page=%s">%s</a></li>""" % (loop_counter, loop_counter)
+        return mark_safe(ele)
+    else:
+        return ''

@@ -21,7 +21,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% get_query_sets admin_class as query_sets %}
                 {% for query_set in query_sets %}
                     <tr>
                         {% build_table_row query_set admin_class %}
@@ -30,6 +29,25 @@
 
                 </tbody>
             </table>
+            {#分页开始#}
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class=""><a href="?page=1">首页</a></li>
+                    {% if query_sets.has_previous %}
+                        <li class=""><a href="?page={{ query_sets.previous_page_number }}">上一页</a></li>
+                    {% endif %}
+
+                    {% for loop_counter in query_sets.paginator.page_range %}
+                        {% render_page_ele loop_counter query_sets %}
+
+                    {% endfor %}
+                    {% if query_sets.has_next %}
+                        <li class=""><a href="?page={{ query_sets.next_page_number }}">下一页</a></li>
+                    {% endif %}
+                    <li class=""><a href="?page=9999999">尾页</a></li>
+                </ul>
+            </nav>
+            {#分页结束#}
         </div>
     </div>
 
