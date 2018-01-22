@@ -23,34 +23,39 @@
             </div>
         </div>
     </nav>
-    <div class="container" style="margin-top: 50px">
-        <div class="row">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    {% for app_name,app_table in table_list.items %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>{{ app_name }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for table_name,admin in app_table.items %}
-                        <tr>
-                            <td><a href="{% url "table_objs" app_name table_name %}">{% render_app_name admin %}</a></td>
-                            <td><a href="">add</a></td>
-                            <td><a href="">edit</a></td>
-                        </tr>
+
+    <div class="container" style="margin: 50px;width: auto">
+        {% block  container %}
+            <div class="row">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Panel title</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for app_name,app_table in table_list.items %}
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>{{ app_name }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for table_name,admin in app_table.items %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url "table_objs" app_name table_name %}">{% render_app_name admin %}</a>
+                                        </td>
+                                        <td><a href="">add</a></td>
+                                        <td><a href="">edit</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endblock %}
     </div>
 
     </body>

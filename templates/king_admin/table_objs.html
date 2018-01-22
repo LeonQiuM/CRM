@@ -1,29 +1,37 @@
-{% extends 'base.html' %}
-{% block body %}
+{% extends 'king_admin/table_index.html' %}
+{% load tags %}
 
-    <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">PerfectCRM</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">{{ request.user }}</a></li>
-                </ul>
-            </div>
+{% block container %}
+    {{ admin_class.list_display }}
+
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Panel title</h3>
         </div>
-    </nav>
-{{ admin_class.model.objects.all }}
 
-    </body>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    {% for colum in admin_class.list_display %}
+                        <th>{{ colum }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% get_query_sets admin_class as query_sets %}
+                {% for query_set in query_sets %}
+                    <tr>
+                        {% build_table_row query_set admin_class %}
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 {% endblock %}
+

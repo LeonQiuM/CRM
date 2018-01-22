@@ -14,11 +14,12 @@ class BaseAdmin(object):
 
 
 class CustomerAdmin(BaseAdmin):
-    list_display = ['qq', 'name']
+    list_display = ['qq', 'name', 'source', 'consultant', 'consult_course', 'status']
 
 
 class CustomerFollowUpAdmin(BaseAdmin):
     list_display = ['customer', 'consultant', 'date']
+
 
 '''
 @staticmethod
@@ -34,6 +35,7 @@ class admin_c(object):
         
         return self.enabled_admins
 '''
+
 
 def register(model_class, admin_class=None):
     if model_class._meta.app_label not in enabled_admins:
