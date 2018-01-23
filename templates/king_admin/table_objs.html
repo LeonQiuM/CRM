@@ -35,14 +35,16 @@
                     <li class=""><a href="?page=1">首页</a></li>
                     {% if query_sets.has_previous %}
                         <li class=""><a href="?page={{ query_sets.previous_page_number }}">上一页</a></li>
+                    {% else %}
+                        <li class="disabled"><span><span aria-hidden="true">上一页</span></span></li>
                     {% endif %}
-
                     {% for loop_counter in query_sets.paginator.page_range %}
                         {% render_page_ele loop_counter query_sets %}
-
                     {% endfor %}
                     {% if query_sets.has_next %}
                         <li class=""><a href="?page={{ query_sets.next_page_number }}">下一页</a></li>
+                    {% else %}
+                        <li class="disabled"><span><span aria-hidden="true">下一页</span></span></li>
                     {% endif %}
                     <li class=""><a href="?page=9999999">尾页</a></li>
                 </ul>
