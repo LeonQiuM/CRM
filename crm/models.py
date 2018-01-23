@@ -40,6 +40,7 @@ class Customer(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "客户表"
+        ordering = ['id']
 
 
 class Tag(models.Model):
@@ -53,6 +54,7 @@ class Tag(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "标签"
+        ordering = ['id']
 
 
 class CustomerFollowUp(models.Model):
@@ -78,6 +80,7 @@ class CustomerFollowUp(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "客户跟进记录"
+        ordering = ['id']
 
 
 class Course(models.Model):
@@ -94,6 +97,7 @@ class Course(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "课程"
+        ordering = ['id']
 
 
 class Branch(models.Model):
@@ -108,6 +112,7 @@ class Branch(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "校区"
+        ordering = ['id']
 
 
 class ClassList(models.Model):
@@ -130,6 +135,7 @@ class ClassList(models.Model):
     class Meta:
         unique_together = ('branch', 'course', 'semester')
         verbose_name_plural = verbose_name = "班级"
+        ordering = ['id']
 
     def __str__(self):
         return "%s %s %s" % (self.branch, self.course, self.semester)
@@ -151,6 +157,7 @@ class CourseRecord(models.Model):
     class Meta:
         unique_together = ('from_class', 'day_number')
         verbose_name_plural = verbose_name = "上课记录"
+        ordering = ['id']
 
     def __str__(self):
         return "%s %s" % (self.from_class, self.day_number)
@@ -191,6 +198,7 @@ class StudyRecord(models.Model):
     class Meta:
         unique_together = ('student', 'course_record')
         verbose_name_plural = verbose_name = "学习记录"
+        ordering = ['id']
 
 
 class Enrollment(models.Model):
@@ -210,6 +218,7 @@ class Enrollment(models.Model):
     class Meta:
         unique_together = ('customer', 'enrolled_class')
         verbose_name_plural = verbose_name = "报名"
+        ordering = ['id']
 
 
 class Payment(models.Model):
@@ -227,6 +236,7 @@ class Payment(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "缴费"
+        ordering = ['id']
 
 
 class UserProfile(models.Model):
@@ -242,6 +252,7 @@ class UserProfile(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "用户账号"
+        ordering = ['id']
 
 
 class Role(models.Model):
@@ -256,6 +267,7 @@ class Role(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "角色"
+        ordering = ['id']
 
 
 class Menu(models.Model):
@@ -270,3 +282,4 @@ class Menu(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "菜单"
+        ordering = ['id']

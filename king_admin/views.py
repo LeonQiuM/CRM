@@ -35,7 +35,7 @@ def display_table_objs(request, app, table):
     model = admin_class.model
     if request.method == "GET":
         object_list = admin_class.model.objects.all()
-        paginator = Paginator(object_list, 2)
+        paginator = Paginator(object_list, 5)
         page = request.GET.get('page')
         try:
             query_sets = paginator.page(page)
