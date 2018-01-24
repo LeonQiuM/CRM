@@ -15,7 +15,7 @@ def table_filter(request, admin_class):
     for k, v in request.GET.items():
         if v:
             filter_conditions[k] = v
-        if k == "page":
+        if k == "page":  # 分页关键字
             del filter_conditions[k]
 
     return admin_class.model.objects.filter(**filter_conditions), filter_conditions
