@@ -47,22 +47,12 @@
             </tfoot>
             </table>
             {#分页开始#}
-            <nav aria-label="...">
+            <nav aria-label="..." class="pull-right">
                 <ul class="pagination">
                     <li class=""><a href="?page=1">首页</a></li>
-                    {% if query_sets.has_previous %}
-                        <li class=""><a href="?page={{ query_sets.previous_page_number }}">上一页</a></li>
-                    {% else %}
-                        <li class="disabled"><span><span aria-hidden="true">上一页</span></span></li>
-                    {% endif %}
-                    {% for loop_counter in query_sets.paginator.page_range %}
-                        {% render_page_ele loop_counter query_sets filter_conditions%}
-                    {% endfor %}
-                    {% if query_sets.has_next %}
-                        <li class=""><a href="?page={{ query_sets.next_page_number }}">下一页</a></li>
-                    {% else %}
-                        <li class="disabled"><span><span aria-hidden="true">下一页</span></span></li>
-                    {% endif %}
+
+                    {% build_paginators query_sets filter_conditions %}
+
                     <li class=""><a href="?page=9999999">尾页</a></li>
                 </ul>
             </nav>

@@ -41,6 +41,14 @@ def render_page_ele(loop_counter, query_sets, filter_conditions):
     filters = ""
     for k, v in filter_conditions.items():
         filters += "&%s=%s" % (k, v)
+
+    if loop_counter < 3 or loop_counter > query_sets.paginator.num_pages - 2:  # 前两页，,后两页都要显示
+        if query_sets.number == loop_counter:
+            ele = """<li class="active"><a href="?page=%s">%s</a></li>""" % (loop_counter, loop_counter)
+        else:
+            ele = """<li><a href="?page=%s%s">%s</a></li>""" % (loop_counter, filters, loop_counter)
+        return mark_safe(ele)
+
     if abs(query_sets.number - loop_counter) <= 2:
         if query_sets.number == loop_counter:
             ele = """<li class="active"><a href="?page=%s">%s</a></li>""" % (loop_counter, loop_counter)
@@ -71,3 +79,45 @@ def render_filter_ele(condtion, admin_class, filter_conditions):
             selectd = ""
     select_ele += "</select>"
     return mark_safe(select_ele)
+
+
+@register.simple_tag
+def build_paginators(query_sets, filter_conditions):
+    filters = page_btns = ""
+    for k, v in filter_conditions.items():
+        filters += "&%s=%s" % (k, v)
+
+    if query_sets.has_previous():
+        prev_page_btn = '''<li class=""><a href="?page=%s%s">上一页</a></li>''' % (
+            query_sets.previous_page_number(), filters
+        )
+    else:
+        prev_page_btn = '''<li class="disabled"><span><span aria-hidden="true">上一页</span></span></li>'''
+
+    if query_sets.has_next():
+        last_page_btn = '''<li class=""><a href="?page=%s%s">下一页</a></li>''' % (
+            query_sets.next_page_number(),
+            filters
+        )
+    else:
+        last_page_btn = '''<li class="disabled"><span><span aria-hidden="true">下一页</span></span></li>'''
+    page_btns += prev_page_btn
+    flag_display = False
+    for page_num in query_sets.paginator.page_range:
+        if page_num < 3 or page_num > query_sets.paginator.num_pages - 2:  # 前两页和后两页
+            if query_sets.number == page_num:
+                page_btns += """<li class="active"><a href="?page=%s%s">%s</a></li>""" % (page_num, filters, page_num)
+            else:
+                page_btns += """<li><a href="?page=%s%s">%s</a></li>""" % (page_num, filters, page_num)
+        elif abs(query_sets.number - page_num) <= 1:
+            if query_sets.number == page_num:
+                flag_display = False
+                page_btns += """<li class="active"><a href="?page=%s%s">%s</a></li>""" % (page_num, filters, page_num)
+            else:
+                page_btns += """<li><a href="?page=%s%s">%s</a></li>""" % (page_num, filters, page_num)
+        else:
+            if not flag_display:
+                flag_display = True
+                page_btns += "<li><a>...</a></li>"
+    page_btns += last_page_btn
+    return mark_safe(page_btns)
