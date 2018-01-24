@@ -12,6 +12,18 @@
         </div>
 
         <div class="panel-body">
+            <div class="row">
+                <form class="form-group" method="get">
+                    {% for condtion in admin_class.list_filters %}
+                        <div class="col-md-1">
+                            <span>{{ condtion }}</span>
+                            {% render_filter_ele condtion admin_class filter_conditions %}
+                        </div>
+                    {% endfor %}
+                        <button type="submit" class="btn btn-success">检索</button>
+                </form>
+            </div>
+
             <table class="table table-hover">
                 <thead>
                 <tr>

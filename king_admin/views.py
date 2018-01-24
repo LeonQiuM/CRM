@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from king_admin import king_admin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from king_admin.utils import table_filter
 
 
 # Create your views here.
@@ -30,12 +31,13 @@ def display_table_objs(request, app, table):
     :param request:
     :return:
     """
-    print(app, table)
-    admin_class = king_admin.enabled_admins[app][table]
-    model = admin_class.model
+
     if request.method == "GET":
-        object_list = admin_class.model.objects.all()
-        paginator = Paginator(object_list, 5)
+        admin_class = king_admin.enabled_admins[app][table]
+        model = admin_class.model
+        # object_list = admin_class.model.objects.all()
+        object_list, filter_conditions = table_filter(request, admin_class)
+        paginator = Paginator(object_list, admin_class.list_per_page)
         page = request.GET.get('page')
         try:
             query_sets = paginator.page(page)
@@ -46,7 +48,10 @@ def display_table_objs(request, app, table):
             # 超过限制，显示最后一页
             query_sets = paginator.page(paginator.num_pages)
 
-        return render(request, 'king_admin/table_objs.html', {'admin_class': admin_class, 'query_sets': query_sets})
+        return render(request, 'king_admin/table_objs.html', {'admin_class': admin_class,
+                                                              'query_sets': query_sets,
+                                                              "filter_conditions": filter_conditions
+                                                              })
 
     elif request.method == "POST":
         pass

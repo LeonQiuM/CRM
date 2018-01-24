@@ -46,3 +46,25 @@ def render_page_ele(loop_counter, query_sets):
         return mark_safe(ele)
     else:
         return ''
+
+
+@register.simple_tag
+def render_filter_ele(condtion, admin_class, filter_conditions):
+    select_ele = """<select class="form-control" name='%s'><option value=''>----</option>""" % condtion
+    field_obj = admin_class.model._meta.get_field(condtion)
+    if field_obj.choices:
+        selectd = ""
+        for choice_item in field_obj.choices:
+            if filter_conditions.get(condtion) == str(choice_item[0]):
+                selectd = "selected"
+            select_ele += """<option value='%s' %s>%s</option>""" % (choice_item[0], selectd, choice_item[1])
+            selectd = ""
+    if type(field_obj).__name__ == "ForeignKey":
+        selectd = ""
+        for choice_item in field_obj.get_choices()[1:]:
+            if filter_conditions.get(condtion) == str(choice_item[0]):
+                selectd = "selected"
+            select_ele += """<option value='%s' %s>%s</option>""" % (choice_item[0], selectd, choice_item[1])
+            selectd = ""
+    select_ele += "</select>"
+    return mark_safe(select_ele)
