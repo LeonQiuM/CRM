@@ -15,7 +15,6 @@ def index(request):
     """
     if request.method == "GET":
         table_list = king_admin.enabled_admins
-        print(table_list)
         return render(request, 'king_admin/table_index.html', locals())
 
     elif request.method == "POST":
@@ -37,8 +36,9 @@ def display_table_objs(request, app, table):
         model = admin_class.model
         # object_list = admin_class.model.objects.all()
         object_list, filter_conditions = table_filter(request, admin_class)  # 过滤
-        if request.GET.get("order", None):
-            object_list = table_sort(request, object_list)  # 排序
+        order_key = ""
+
+        object_list, order_key = table_sort(request, object_list)  # 排序
 
         paginator = Paginator(object_list, admin_class.list_per_page)
         page = request.GET.get('page')
@@ -51,10 +51,7 @@ def display_table_objs(request, app, table):
             # 超过限制，显示最后一页
             query_sets = paginator.page(paginator.num_pages)
 
-        return render(request, 'king_admin/table_objs.html', {'admin_class': admin_class,
-                                                              'query_sets': query_sets,
-                                                              "filter_conditions": filter_conditions
-                                                              })
+        return render(request, 'king_admin/table_objs.html', locals())
 
     elif request.method == "POST":
         pass

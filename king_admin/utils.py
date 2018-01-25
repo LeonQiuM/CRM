@@ -17,13 +17,17 @@ def table_filter(request, admin_class):
             filter_conditions[k] = v
         if k == "page" or k == 'order':  # 分页关键字,排序关键字
             del filter_conditions[k]
-    print(filter_conditions)
     return admin_class.model.objects.filter(**filter_conditions), filter_conditions
 
 
 def table_sort(request, objs):
     order_key = request.GET.get("order")
-    if order_key and order_key.startswith('-'):
-        return objs.order_by("-%s" % order_key)
-    elif order_key:
-        return objs.order_by(order_key)
+    if order_key:
+        res = objs.order_by(order_key)
+        if order_key.startswith('-'):
+            order_key = order_key.strip('-')
+        else:
+            order_key = "-%s" % order_key
+    else:
+        res = objs
+    return res, order_key

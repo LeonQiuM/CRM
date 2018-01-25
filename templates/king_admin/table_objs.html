@@ -27,7 +27,7 @@
                 <thead>
                 <tr>
                     {% for colum in admin_class.list_display %}
-                        {% build_table_thead colum filter_conditions %}
+                        {% build_table_thead colum  order_key filter_conditions %}
                     {% endfor %}
                 </tr>
                 </thead>

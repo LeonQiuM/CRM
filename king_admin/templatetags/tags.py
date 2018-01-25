@@ -126,9 +126,29 @@ def build_paginators(query_sets, filter_conditions):
 
 
 @register.simple_tag
-def build_table_thead(colum, filter_conditions):
+def build_table_thead(column, order_key, filter_conditions):
     filters = ""
     for k, v in filter_conditions.items():
         if v:
             filters += "&%s=%s" % (k, v)
-    return mark_safe('''<th><a href="?order=%s%s">%s</a></th>''' % (colum, filters, colum))
+    ele = """
+            <th>
+                {column}<a href='?order={order_key}{filters}'>{sort_icon}</a>
+            </th>
+        """
+    if order_key:
+        if order_key.startswith('-'):
+            sort_icon = '<span class="glyphicon glyphicon-sort-by-attributes pull-right"></span>'
+        else:
+            sort_icon = '<span class="glyphicon glyphicon-sort-by-attributes-alt pull-right"></span>'
+        if order_key.strip('-') == column:
+            order_key = order_key
+        else:
+            order_key = column
+            sort_icon = '<span class="glyphicon glyphicon-sort pull-right" aria-hidden="true"></span>'
+    else:  # 没有排序
+        order_key = column
+        sort_icon = '<span class="glyphicon glyphicon-sort pull-right" aria-hidden="true"></span>'
+    ele = ele.format(order_key=order_key, filters=filters, column=column, sort_icon=sort_icon)
+
+    return mark_safe(ele)
