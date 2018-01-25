@@ -20,15 +20,14 @@
                             {% render_filter_ele condtion admin_class filter_conditions %}
                         </div>
                     {% endfor %}
-                        <button type="submit" class="btn btn-success">检索</button>
+                    <button type="submit" class="btn btn-success">检索</button>
                 </form>
             </div>
-
-            <table class="table table-hover">
+            <table class="table table-hover table-bordered">
                 <thead>
                 <tr>
                     {% for colum in admin_class.list_display %}
-                        <th>{{ colum }}</th>
+                        {% build_table_thead colum filter_conditions %}
                     {% endfor %}
                 </tr>
                 </thead>
@@ -38,21 +37,14 @@
                         {% build_table_row query_set admin_class %}
                     </tr>
                 {% endfor %}
-
                 </tbody>
-            <tfoot>
-                <tr>
-                    <td>总计{{ query_sets.paginator.count }}条</td>
-                </tr>
-            </tfoot>
             </table>
             {#分页开始#}
             <nav aria-label="..." class="pull-right">
                 <ul class="pagination">
+                    <li><a>总计{{ query_sets.paginator.count }}条</a></li>
                     <li class=""><a href="?page=1">首页</a></li>
-
                     {% build_paginators query_sets filter_conditions %}
-
                     <li class=""><a href="?page=9999999">尾页</a></li>
                 </ul>
             </nav>

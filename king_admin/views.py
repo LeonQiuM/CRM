@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from king_admin import king_admin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from king_admin.utils import table_filter
+from king_admin.utils import table_filter, table_sort
 
 
 # Create your views here.
@@ -36,7 +36,10 @@ def display_table_objs(request, app, table):
         admin_class = king_admin.enabled_admins[app][table]
         model = admin_class.model
         # object_list = admin_class.model.objects.all()
-        object_list, filter_conditions = table_filter(request, admin_class)
+        object_list, filter_conditions = table_filter(request, admin_class)  # 过滤
+        if request.GET.get("order", None):
+            object_list = table_sort(request, object_list)  # 排序
+
         paginator = Paginator(object_list, admin_class.list_per_page)
         page = request.GET.get('page')
         try:

@@ -40,7 +40,8 @@ def build_table_row(obj, admin_class):
 def render_page_ele(loop_counter, query_sets, filter_conditions):
     filters = ""
     for k, v in filter_conditions.items():
-        filters += "&%s=%s" % (k, v)
+        if v:
+            filters += "&%s=%s" % (k, v)
 
     if loop_counter < 3 or loop_counter > query_sets.paginator.num_pages - 2:  # 前两页，,后两页都要显示
         if query_sets.number == loop_counter:
@@ -85,7 +86,8 @@ def render_filter_ele(condtion, admin_class, filter_conditions):
 def build_paginators(query_sets, filter_conditions):
     filters = page_btns = ""
     for k, v in filter_conditions.items():
-        filters += "&%s=%s" % (k, v)
+        if v:
+            filters += "&%s=%s" % (k, v)
 
     if query_sets.has_previous():
         prev_page_btn = '''<li class=""><a href="?page=%s%s">上一页</a></li>''' % (
@@ -121,3 +123,12 @@ def build_paginators(query_sets, filter_conditions):
                 page_btns += "<li><a>...</a></li>"
     page_btns += last_page_btn
     return mark_safe(page_btns)
+
+
+@register.simple_tag
+def build_table_thead(colum, filter_conditions):
+    filters = ""
+    for k, v in filter_conditions.items():
+        if v:
+            filters += "&%s=%s" % (k, v)
+    return mark_safe('''<th><a href="?order=%s%s">%s</a></th>''' % (colum, filters, colum))

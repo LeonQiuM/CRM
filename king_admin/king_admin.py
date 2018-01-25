@@ -15,29 +15,13 @@ class BaseAdmin(object):
 
 
 class CustomerAdmin(BaseAdmin):
-    list_display = ['qq', 'name', 'source', 'consultant', 'consult_course', 'status', 'date']
+    list_display = ['id', 'qq', 'name', 'source', 'consultant', 'consult_course', 'status', 'date']
     list_filters = ['source', 'consultant', 'consult_course', 'status']
-    list_per_page = 1
+    list_per_page = 10
 
 
 class CustomerFollowUpAdmin(BaseAdmin):
     list_display = ['customer', 'consultant', 'date']
-
-
-'''
-@staticmethod
-class admin_c(object):
-    def __init__(self, model_class, your_class):
-        self.model = your_class
-        self.model_class = model_class
-        self.enabled_admins = {}
-
-    def register(self):
-        if self.model_class._meta.app_label not in self.enabled_admins: # app
-            self.enabled_admins[self.model_class._meta.app_label] = {}
-        
-        return self.enabled_admins
-'''
 
 
 def register(model_class, admin_class=None):
