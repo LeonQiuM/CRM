@@ -43,9 +43,7 @@
             <nav aria-label="..." class="pull-right">
                 <ul class="pagination">
                     <li><a>总计{{ query_sets.paginator.count }}条</a></li>
-                    <li class=""><a href="?page=1">首页</a></li>
-                    {% build_paginators query_sets filter_conditions %}
-                    <li class=""><a href="?page=9999999">尾页</a></li>
+                    {% build_paginators query_sets filter_conditions previous_order %}
                 </ul>
             </nav>
             {#分页结束#}

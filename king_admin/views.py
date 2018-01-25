@@ -50,7 +50,7 @@ def display_table_objs(request, app, table):
         except EmptyPage:
             # 超过限制，显示最后一页
             query_sets = paginator.page(paginator.num_pages)
-
+        previous_order = request.GET.get('order', "")
         return render(request, 'king_admin/table_objs.html', locals())
 
     elif request.method == "POST":

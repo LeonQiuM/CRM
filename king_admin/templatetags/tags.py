@@ -83,7 +83,8 @@ def render_filter_ele(condtion, admin_class, filter_conditions):
 
 
 @register.simple_tag
-def build_paginators(query_sets, filter_conditions):
+def build_paginators(query_sets, filter_conditions, previous_order):
+    filter_conditions['order'] = previous_order
     filters = page_btns = ""
     for k, v in filter_conditions.items():
         if v:
@@ -103,6 +104,7 @@ def build_paginators(query_sets, filter_conditions):
         )
     else:
         last_page_btn = '''<li class="disabled"><span><span aria-hidden="true">下一页</span></span></li>'''
+    page_btns += """<li><a href="?page=1%s">首页</a></li>""" % (filters)
     page_btns += prev_page_btn
     flag_display = False
     for page_num in query_sets.paginator.page_range:
@@ -122,6 +124,7 @@ def build_paginators(query_sets, filter_conditions):
                 flag_display = True
                 page_btns += "<li><a>...</a></li>"
     page_btns += last_page_btn
+    page_btns += """<li><a href="?page=99999999%s">首页</a></li>""" % (filters)
     return mark_safe(page_btns)
 
 
