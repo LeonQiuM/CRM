@@ -10,13 +10,15 @@ enabled_admins = {}
 
 class BaseAdmin(object):
     list_display = []
-    list_filter = []
-    list_per_page = 10
+    list_filters = []
+    list_per_page = 5
+    search_fields = []
 
 
 class CustomerAdmin(BaseAdmin):
     list_display = ['id', 'qq', 'name', 'source', 'consultant', 'consult_course', 'status', 'date']
     list_filters = ['source', 'consultant', 'consult_course', 'status']
+    search_fields = ['name', 'qq', 'consultant__name']
     list_per_page = 1
 
 

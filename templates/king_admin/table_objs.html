@@ -4,8 +4,6 @@
 
 {% block container %}
     {{ admin_class.list_display }}
-
-
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3 class="panel-title">Panel title</h3>
@@ -20,14 +18,27 @@
                             {% render_filter_ele condtion admin_class filter_conditions %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="btn btn-success">检索</button>
+                    {# TODO #}
+                    <a href="" type="submit" class="btn btn-danger" style="margin-top: 19px;display: none">检索</a>
+                    <button type="submit" class="btn btn-success" style="margin-top: 19px">检索</button>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-3" style="margin-left: 16px">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search fields [{% for i in admin_class.search_fields %}{{ i  }},&nbsp;{% endfor %}] " name="_q" value="{{ search_key }}">
+                                <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">搜索</button>
+                            </span>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <table class="table table-hover table-bordered">
                 <thead>
                 <tr>
                     {% for colum in admin_class.list_display %}
-                        {% build_table_thead colum  order_key filter_conditions %}
+                        {% build_table_thead colum order_key filter_conditions %}
                     {% endfor %}
                 </tr>
                 </thead>
@@ -43,7 +54,7 @@
             <nav aria-label="..." class="pull-right">
                 <ul class="pagination">
                     <li><a>总计{{ query_sets.paginator.count }}条</a></li>
-                    {% build_paginators query_sets filter_conditions previous_order %}
+                    {% build_paginators query_sets filter_conditions previous_order search_key%}
                 </ul>
             </nav>
             {#分页结束#}

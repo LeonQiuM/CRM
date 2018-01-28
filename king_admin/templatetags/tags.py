@@ -83,13 +83,15 @@ def render_filter_ele(condtion, admin_class, filter_conditions):
 
 
 @register.simple_tag
-def build_paginators(query_sets, filter_conditions, previous_order):
+def build_paginators(query_sets, filter_conditions, previous_order, search_key):
     filter_conditions['order'] = previous_order
+    filter_conditions['_q'] = search_key
+
     filters = page_btns = ""
     for k, v in filter_conditions.items():
         if v:
             filters += "&%s=%s" % (k, v)
-
+    print(filters)
     if query_sets.has_previous():
         prev_page_btn = '''<li class=""><a href="?page=%s%s">上一页</a></li>''' % (
             query_sets.previous_page_number(), filters
