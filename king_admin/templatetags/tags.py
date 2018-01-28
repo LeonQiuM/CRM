@@ -5,22 +5,23 @@
 
 from django import template
 from django.utils.safestring import mark_safe
-import datetime
+from django.utils import timezone
+import pytz
 
 register = template.Library()
 
 
-@register.simple_tag()
+@register.simple_tag
 def render_app_name(admin_class):
     return admin_class.model._meta.verbose_name
 
 
-@register.simple_tag()
+@register.simple_tag
 def get_query_sets(admin_class):
     return admin_class.model.objects.all()
 
 
-@register.simple_tag()
+@register.simple_tag
 def build_table_row(obj, admin_class):
     row_ele = ""
     for column in admin_class.list_display:
@@ -36,7 +37,7 @@ def build_table_row(obj, admin_class):
     return mark_safe(row_ele)
 
 
-@register.simple_tag()
+@register.simple_tag
 def render_page_ele(loop_counter, query_sets, filter_conditions):
     filters = ""
     for k, v in filter_conditions.items():
@@ -60,25 +61,49 @@ def render_page_ele(loop_counter, query_sets, filter_conditions):
         return ''
 
 
-@register.simple_tag()
-def render_filter_ele(condtion, admin_class, filter_conditions):
-    select_ele = """<select class="form-control" name='%s'><option value=''>-ALL-</option>""" % condtion
-    field_obj = admin_class.model._meta.get_field(condtion)
+@register.simple_tag
+def render_filter_ele(filter_field, admin_class, filter_conditions):
+    select_ele = """<select class="form-control" name='{filter_field}'><option value=''>-ALL-</option>"""
+    field_obj = admin_class.model._meta.get_field(filter_field)
     if field_obj.choices:
         selectd = ""
         for choice_item in field_obj.choices:
-            if filter_conditions.get(condtion) == str(choice_item[0]):
+            if filter_conditions.get(filter_field) == str(choice_item[0]):
                 selectd = "selected"
             select_ele += """<option value='%s' %s>%s</option>""" % (choice_item[0], selectd, choice_item[1])
             selectd = ""
     if type(field_obj).__name__ == "ForeignKey":
         selectd = ""
         for choice_item in field_obj.get_choices()[1:]:
-            if filter_conditions.get(condtion) == str(choice_item[0]):
+            if filter_conditions.get(filter_field) == str(choice_item[0]):
                 selectd = "selected"
             select_ele += """<option value='%s' %s>%s</option>""" % (choice_item[0], selectd, choice_item[1])
             selectd = ""
+
+    if type(field_obj).__name__ in ["DateTimeField", "DateField"]:
+        current_today = timezone.now().date()
+        date_choiecs_lsit = []
+        date_choiecs_lsit.append(["今天", current_today])
+        date_choiecs_lsit.append(["近1天", current_today - timezone.timedelta(days=1)])
+        date_choiecs_lsit.append(["近3天", current_today - timezone.timedelta(days=3)])
+        date_choiecs_lsit.append(["近7天", current_today - timezone.timedelta(days=7)])
+        date_choiecs_lsit.append(["本月", current_today.replace(day=1)])
+        date_choiecs_lsit.append(["近30天", current_today - timezone.timedelta(days=30)])
+        date_choiecs_lsit.append(["近90天", current_today - timezone.timedelta(days=90)])
+        date_choiecs_lsit.append(["近180天", current_today - timezone.timedelta(days=180)])
+        date_choiecs_lsit.append(["本年", current_today.replace(month=1, day=1)])
+        date_choiecs_lsit.append(["近一年", current_today - timezone.timedelta(days=365)])
+        selectd = ""
+        for item in date_choiecs_lsit:
+            if filter_conditions.get("%s__gte"%filter_field) == str(item[1]):
+                selectd = "selected"
+            select_ele += """<option value='%s' %s>%s</option>""" % (item[1], selectd, item[0])
+            selectd = ""
+        filter_field_name = "%s__gte" % (filter_field)
+    else:
+        filter_field_name = filter_field
     select_ele += "</select>"
+    select_ele = select_ele.format(filter_field=filter_field_name)
     return mark_safe(select_ele)
 
 
@@ -91,7 +116,6 @@ def build_paginators(query_sets, filter_conditions, previous_order, search_key):
     for k, v in filter_conditions.items():
         if v:
             filters += "&%s=%s" % (k, v)
-    print(filters)
     if query_sets.has_previous():
         prev_page_btn = '''<li class=""><a href="?page=%s%s">上一页</a></li>''' % (
             query_sets.previous_page_number(), filters
