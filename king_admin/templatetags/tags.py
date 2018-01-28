@@ -22,9 +22,9 @@ def get_query_sets(admin_class):
 
 
 @register.simple_tag
-def build_table_row(obj, admin_class):
+def build_table_row(obj, admin_class, request):
     row_ele = ""
-    for column in admin_class.list_display:
+    for index, column in enumerate(admin_class.list_display):
         filed_obj = obj._meta.get_field(column)
         if filed_obj.choices:
             column_data = getattr(obj, 'get_%s_display' % column)()
@@ -33,6 +33,9 @@ def build_table_row(obj, admin_class):
 
         if type(column_data).__name__ == "datetime":
             column_data = column_data.strftime("%Y-%m-%d %H:%M:%S")
+        if index == 0:
+            column_data = "<a href='%s%s/change/' >%s</a>" % (request.path, obj.id, column_data)
+            print(column_data)
         row_ele += "<td>%s</td>" % (column_data)
     return mark_safe(row_ele)
 
@@ -95,7 +98,7 @@ def render_filter_ele(filter_field, admin_class, filter_conditions):
         date_choiecs_lsit.append(["近一年", current_today - timezone.timedelta(days=365)])
         selectd = ""
         for item in date_choiecs_lsit:
-            if filter_conditions.get("%s__gte"%filter_field) == str(item[1]):
+            if filter_conditions.get("%s__gte" % filter_field) == str(item[1]):
                 selectd = "selected"
             select_ele += """<option value='%s' %s>%s</option>""" % (item[1], selectd, item[0])
             selectd = ""

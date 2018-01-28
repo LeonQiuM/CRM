@@ -60,3 +60,19 @@ def display_table_objs(request, app, table):
 
     else:
         pass
+
+
+def table_obj_change(request, app, table, id):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == "GET":
+        return render(request,'king_admin/table_obj_change.html',locals())
+
+    elif request.method == "POST":
+        pass
+
+    else:
+        pass
