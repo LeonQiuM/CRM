@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from king_admin import king_admin
+from king_admin import king_admin, forms
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from king_admin.utils import table_filter, table_sort, table_search
 
@@ -68,11 +68,20 @@ def table_obj_change(request, app, table, id):
     :param request:
     :return:
     """
+    admin_class = king_admin.enabled_admins[app][table]
+    model_form_class = forms.create_model_form(request, admin_class)
+    query_set = admin_class.model.objects.get(id=id)
+
     if request.method == "GET":
-        return render(request,'king_admin/table_obj_change.html',locals())
+        form_obj = model_form_class(instance=query_set)
+        for i in form_obj:
+            print(i)
+        return render(request, 'king_admin/table_obj_change.html', locals())
 
     elif request.method == "POST":
-        pass
-
+        form_obj = model_form_class(request.POST, instance=query_set)
+        if form_obj.is_valid():
+            form_obj.save()
+        return render(request, 'king_admin/table_obj_change.html', locals())
     else:
         pass
