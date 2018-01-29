@@ -19,7 +19,11 @@ def table_filter(request, admin_class):
             continue
         if v:
             filter_conditions[k] = v
-    return admin_class.model.objects.filter(**filter_conditions), filter_conditions
+    if admin_class.ordering:
+        default_order_field = admin_class.ordering
+    else:
+        default_order_field = '-id'
+    return admin_class.model.objects.filter(**filter_conditions).order_by(default_order_field), filter_conditions
 
 
 def table_sort(request, objs):

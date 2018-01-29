@@ -9,10 +9,11 @@ enabled_admins = {}
 
 
 class BaseAdmin(object):
-    list_display = []
-    list_filters = []
-    list_per_page = 5
-    search_fields = []
+    list_display = []  # 展示字段
+    list_filters = []  # 多条件查询字段
+    list_per_page = 5  # 单页数量
+    search_fields = []  # 可搜索字段
+    ordering = None  # 按照哪个排序
 
 
 class CustomerAdmin(BaseAdmin):
@@ -20,6 +21,7 @@ class CustomerAdmin(BaseAdmin):
     list_filters = ['source', 'consultant', 'consult_course', 'status', 'date']
     search_fields = ['name', 'qq', 'consultant__name']
     list_per_page = 5
+    ordering = 'date'
 
 
 class CustomerFollowUpAdmin(BaseAdmin):

@@ -35,7 +35,6 @@ def build_table_row(obj, admin_class, request):
             column_data = column_data.strftime("%Y-%m-%d %H:%M:%S")
         if index == 0:
             column_data = "<a href='%s%s/change/' >%s</a>" % (request.path, obj.id, column_data)
-            print(column_data)
         row_ele += "<td>%s</td>" % (column_data)
     return mark_safe(row_ele)
 
@@ -184,3 +183,8 @@ def build_table_thead(column, order_key, filter_conditions):
     ele = ele.format(order_key=order_key, filters=filters, column=column, sort_icon=sort_icon)
 
     return mark_safe(ele)
+
+
+@register.simple_tag
+def get_model_name(admin_class):
+    return mark_safe(admin_class.model._meta.verbose_name)

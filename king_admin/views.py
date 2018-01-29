@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse, redirect
+from django.core.urlresolvers import reverse
 from king_admin import king_admin, forms
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from king_admin.utils import table_filter, table_sort, table_search
@@ -34,7 +35,6 @@ def display_table_objs(request, app, table):
     if request.method == "GET":
         admin_class = king_admin.enabled_admins[app][table]
         model = admin_class.model
-        # object_list = admin_class.model.objects.all()
         object_list, filter_conditions = table_filter(request, admin_class)  # 过滤
 
         object_list, search_key = table_search(request, admin_class, object_list)
@@ -74,8 +74,6 @@ def table_obj_change(request, app, table, id):
 
     if request.method == "GET":
         form_obj = model_form_class(instance=query_set)
-        for i in form_obj:
-            print(i)
         return render(request, 'king_admin/table_obj_change.html', locals())
 
     elif request.method == "POST":
@@ -85,3 +83,22 @@ def table_obj_change(request, app, table, id):
         return render(request, 'king_admin/table_obj_change.html', locals())
     else:
         pass
+
+
+def table_obj_add(request, app, table):
+    """
+
+    :param request:
+    :return:
+    """
+    admin_class = king_admin.enabled_admins[app][table]
+    model_form_class = forms.create_model_form(request, admin_class)
+    if request.method == "POST":
+        form_obj = model_form_class(request.POST)
+        if form_obj.is_valid():
+            form_obj.save()
+            return redirect(reverse('table_objs', kwargs={"app": app, "table": table}))
+    else:
+
+        form_obj = model_form_class()
+    return render(request, 'king_admin/table_obj_add.html', locals())
