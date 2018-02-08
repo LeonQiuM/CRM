@@ -14,6 +14,7 @@ class BaseAdmin(object):
     list_per_page = 5  # 单页数量
     search_fields = []  # 可搜索字段
     ordering = None  # 按照哪个排序
+    filter_horizontal = []   # 外键复选框
 
 
 class CustomerAdmin(BaseAdmin):
@@ -22,7 +23,8 @@ class CustomerAdmin(BaseAdmin):
     search_fields = ['name', 'qq', 'consultant__name']
     list_per_page = 5
     ordering = 'date'
-
+    filter_horizontal = ['tag']
+  
 
 class CustomerFollowUpAdmin(BaseAdmin):
     list_display = ['customer', 'consultant', 'date']

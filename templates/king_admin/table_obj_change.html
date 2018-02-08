@@ -2,6 +2,20 @@
 {% load tags %}
 
 
+{% block extra-css-resources %}
+    <style>
+        .filter-select-box {
+            height: 250px !important;
+            width: 100% !important;
+            border-radius: 6px;
+
+        }
+
+    </style>
+{% endblock %}
+
+
+
 {% block container %}
     <div class="row">
         <div class="panel panel-success">
@@ -10,25 +24,56 @@
             </div>
 
             <div class="panel-body">
-                <form class="form-horizontal" method="post">
+                <form class="form-horizontal" method="post" onsubmit="return selectedAllOptions()">
                     {% csrf_token %}
                     {{ form_obj.errors }}
                     {% for field in form_obj %}
                         <div class="form-group">
                             <label for="" class="col-sm-2 control-label">
                                 {% if field.field.required %}
-                                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> {{ field.label }}
+                                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                                    {{ field.label }}
                                 {% else %}
                                     {{ field.label }}
                                 {% endif %}
                             </label>
                             <div class="col-sm-4">
-                                {{ field }}
+                                {% if field.name in admin_class.filter_horizontal %}
+                                    <div class="col-md-5">
+                                        <select name="{{ field.name }}" id="id_{{ field.name }}_from"
+                                                multiple="multiple"
+                                                class="filter-select-box">
+                                            {% get_m2m_obj_list admin_class field form_obj as standbt_obj_list %}
+                                            {% for obj in standbt_obj_list %}
+                                                <option ondblclick="moveElementTo(this,'id_{{ field.name }}_to','id_{{ field.name }}_from')"
+                                                        value="{{ obj.id }}">{{ obj }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1">
+                                        箭头
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select name="{{ field.name }}" id="id_{{ field.name }}_to" multiple="multiple"
+                                                class="filter-select-box select_choose">
+                                            {% get_m2m_selected_obj_list form_obj field as selected_obj_list %}
+                                            {% for selected_obj in selected_obj_list %}
+                                                <option ondblclick="moveElementTo(this,'id_{{ field.name }}_from','id_{{ field.name }}_to')"
+                                                        value="{{ selected_obj.id }}">{{ selected_obj }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
                             </div>
                         </div>
                         <hr>
                     {% endfor %}
                     <div class="form-group">
+                        <div class="col-md-2">
+                            <a class="btn btn-danger" type="button" href="{% url 'obj_delete' app table form_obj.instance.id %}" >delete</a>
+                        </div>
                         <div class="col-md-10">
                             <button type="submit" class="btn btn-success pull-right" value="save">save</button>
                         </div>
@@ -37,4 +82,20 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javaScripts %}
+    <script>
+        function moveElementTo(ele, target_id, new_target_id) {
+            var opt_ele = "<option value='" + $(ele).val() + "' ondblclick=moveElementTo(this,'" + new_target_id + "','" + target_id + "')>" + $(ele).text() + "</option>";
+            $('#' + target_id).append(opt_ele);
+            $(ele).remove();
+        }
+
+        function selectedAllOptions() {
+
+            $('.select_choose option').prop("selected",true)
+
+
+        }
+    </script>
 {% endblock %}

@@ -74,6 +74,7 @@ def table_obj_change(request, app, table, id):
 
     if request.method == "GET":
         form_obj = model_form_class(instance=query_set)
+
         return render(request, 'king_admin/table_obj_change.html', locals())
 
     elif request.method == "POST":
@@ -83,6 +84,17 @@ def table_obj_change(request, app, table, id):
         return render(request, 'king_admin/table_obj_change.html', locals())
     else:
         pass
+
+
+def table_obj_delete(request, app, table, id):
+    """
+
+    :param request:
+    :return:
+    """
+    admin_class = king_admin.enabled_admins[app][table]
+    obj = admin_class.model.objects.filter(id=id)
+    return render(request, "king_admin/table_obj_delete.html", locals())
 
 
 def table_obj_add(request, app, table):
@@ -101,4 +113,4 @@ def table_obj_add(request, app, table):
     else:
 
         form_obj = model_form_class()
-    return render(request, 'king_admin/table_obj_add.html', locals())
+    return render(request, 'king_admin/table_obj_add.html', {"form_obj": form_obj, "admin_class": admin_class})

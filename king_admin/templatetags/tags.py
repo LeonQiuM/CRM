@@ -188,3 +188,27 @@ def build_table_thead(column, order_key, filter_conditions):
 @register.simple_tag
 def get_model_name(admin_class):
     return mark_safe(admin_class.model._meta.verbose_name)
+
+
+@register.simple_tag
+def get_m2m_obj_list(admin_class, field, form_obj):
+    """返回m2m的所有待选数据"""
+    field_obj = getattr(admin_class.model, field.name)
+    all_m2m_data_list = field_obj.rel.to.objects.all()  # 表结构对象中的某个字段的全部数据
+    if form_obj.instance.id:
+        selected_m2m_data_list = getattr(form_obj.instance, field.name).all()  # 单条数据对象中的某个字段的选中数据
+    else:  # 代表这是在创建新的记录
+        return all_m2m_data_list
+    standby_obj_list = []
+    for obj in all_m2m_data_list:
+        if obj not in selected_m2m_data_list:
+            standby_obj_list.append(obj)
+    return standby_obj_list
+
+
+@register.simple_tag
+def get_m2m_selected_obj_list(form_obj, field):
+    """返回m2m的已经选中的数据"""
+    if form_obj.instance.id:
+        field_obj = getattr(form_obj.instance, field.name)
+        return field_obj.all()
