@@ -1,0 +1,8 @@
+{% extends 'king_admin/table_index.html' %}
+{% load tags %}
+
+{% block container %}
+
+    {{ obj   }}
+    {% display_all_related_obj obj %}
+{% endblock %}

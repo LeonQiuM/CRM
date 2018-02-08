@@ -212,3 +212,46 @@ def get_m2m_selected_obj_list(form_obj, field):
     if form_obj.instance.id:
         field_obj = getattr(form_obj.instance, field.name)
         return field_obj.all()
+
+
+@register.simple_tag
+def display_all_related_obj(obj):
+    objs = [obj, ]
+    if objs:
+        # model_class = objs[0]._meta.model
+        # model_name = objs[0]._meta.model_name
+        res = recursive_related_objs_lookup(objs)
+        return mark_safe(res)
+
+
+def recursive_related_objs_lookup(objs):
+    """递归查找"""
+    ul_ele = "<ul>"
+    for obj in objs:
+        model_name = obj._meta.model_name
+        li_ele = """<li> %s: %s </li> """ % (obj._meta.verbose_name, obj.__str__())
+        ul_ele += li_ele
+        sub_ul_ele = "<ul>"
+        for m2m_field in obj._meta.local_many_to_many:
+
+            m2m_field_obj = getattr(obj, m2m_field.name)
+            for o in m2m_field_obj.all():
+                sub_li_ele = "<li>%s: %s</li>" % (m2m_field.verbose_name, o.__str__())
+                sub_ul_ele += sub_li_ele
+            sub_ul_ele += "</ul>"
+            ul_ele += sub_ul_ele
+        for related_obj in obj._meta.related_objects:
+            if "ManyToOneRel" not in related_obj.__repr__():
+                continue
+            if hasattr(obj, related_obj.get_accessor_name()):
+                accessor_obj = getattr(obj, related_obj.get_accessor_name())
+
+                if hasattr(accessor_obj, 'all'):
+                    target_objs = accessor_obj.all()
+                else:
+                    target_objs = accessor_obj
+                if len(target_objs) > 0:
+                    nodes = recursive_related_objs_lookup(target_objs)
+                    ul_ele += nodes
+    ul_ele += "</ul>"
+    return ul_ele

@@ -76,7 +76,7 @@ class CustomerFollowUp(models.Model):
     intention = models.SmallIntegerField(choices=intention_choices)
 
     def __str__(self):
-        return "<%s>" % self.customer
+        return "%s" % self.customer
 
     class Meta:
         verbose_name_plural = verbose_name = "客户跟进记录"

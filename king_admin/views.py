@@ -93,7 +93,7 @@ def table_obj_delete(request, app, table, id):
     :return:
     """
     admin_class = king_admin.enabled_admins[app][table]
-    obj = admin_class.model.objects.filter(id=id)
+    obj = admin_class.model.objects.get(id=id)
     return render(request, "king_admin/table_obj_delete.html", locals())
 
 
