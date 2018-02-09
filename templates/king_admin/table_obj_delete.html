@@ -2,14 +2,15 @@
 {% load tags %}
 
 {% block container %}
-
-    {{ obj   }}
-    {% display_all_related_obj obj %}
+    {{ objs   }}
+    {% display_all_related_obj objs %}
     <form method="post">
         {% csrf_token %}
         <input type="submit" class="btn btn-danger" value="确认删除">
+        <input type="hidden" value="yes" name="delete_confirm">
+        <input type="hidden" value="{{ selected_ids }}" name="selected_ids">
+        <input type="hidden" value="{{ action }}" name="action">
         <a type="button" class="btn btn-info" href="{% url 'table_objs' app table %}" >返回</a>
-
     </form>
 {% endblock %}
 

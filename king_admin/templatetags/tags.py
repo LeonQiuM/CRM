@@ -215,8 +215,8 @@ def get_m2m_selected_obj_list(form_obj, field):
 
 
 @register.simple_tag
-def display_all_related_obj(obj):
-    objs = [obj, ]
+def display_all_related_obj(objs):
+    # objs = [objs, ]
     if objs:
         # model_class = objs[0]._meta.model
         # model_name = objs[0]._meta.model_name
@@ -263,3 +263,12 @@ def recursive_related_objs_lookup(objs):
                     ul_ele += nodes
     ul_ele += "</ul>"
     return ul_ele
+
+
+@register.simple_tag
+def get_action_name(admin_class, action):
+    func_action = getattr(admin_class, action)
+    if func_action.__doc__:
+        return func_action.__doc__
+    else:
+        return action

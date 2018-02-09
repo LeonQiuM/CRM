@@ -4,6 +4,8 @@
 # Date: 2018/1/9
 
 from crm import models
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 
 enabled_admins = {}
 
@@ -15,6 +17,19 @@ class BaseAdmin(object):
     search_fields = []  # 可搜索字段
     ordering = None  # 按照哪个排序
     filter_horizontal = []  # 外键复选框
+    actions = ['delete_selected_objs']
+
+    def delete_selected_objs(self, request, query_sets):
+        objs = query_sets
+        app = self.model._meta.app_label
+        table = self.model._meta.model_name
+        admin_class = self
+        selected_ids = ','.join([str(i.id) for i in query_sets])
+        if request.POST.get('delete_confirm') == "yes":
+            query_sets.delete()
+            return redirect(reverse("table_objs", kwargs={"app": app, "table": table}))
+        action = request._admin_action
+        return render(request, 'king_admin/table_obj_delete.html', locals())
 
 
 class UserProfileAdmin(BaseAdmin):
@@ -28,6 +43,11 @@ class CustomerAdmin(BaseAdmin):
     list_per_page = 5
     ordering = 'date'
     filter_horizontal = ['tag']
+    actions = ['delete_selected_objs', 'test']
+
+    def test(self, request, query_sets):
+        """测试动作"""
+        print("in test")
 
 
 class CustomerFollowUpAdmin(BaseAdmin):

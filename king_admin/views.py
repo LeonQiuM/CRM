@@ -31,9 +31,8 @@ def display_table_objs(request, app, table):
     :param request:
     :return:
     """
-
+    admin_class = king_admin.enabled_admins[app][table]
     if request.method == "GET":
-        admin_class = king_admin.enabled_admins[app][table]
         model = admin_class.model
         object_list, filter_conditions = table_filter(request, admin_class)  # 过滤
 
@@ -56,8 +55,17 @@ def display_table_objs(request, app, table):
         return render(request, 'king_admin/table_objs.html', locals())
 
     elif request.method == "POST":
-        pass
-
+        # action
+        selected_ids = request.POST.get("selected_ids", [])
+        action = request.POST.get("action", None)
+        if selected_ids:
+            selected_objs = admin_class.model.objects.filter(id__in=selected_ids.split(','))
+        else:
+            raise KeyError("no object selected")
+        if hasattr(admin_class, action):
+            action_func = getattr(admin_class, action)
+            request._admin_action = action
+            return action_func(admin_class, request, selected_objs)
     else:
         pass
 
