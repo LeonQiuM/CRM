@@ -232,18 +232,26 @@ def recursive_related_objs_lookup(objs):
         li_ele = """<li> %s: %s </li> """ % (obj._meta.verbose_name, obj.__str__())
         ul_ele += li_ele
         sub_ul_ele = "<ul>"
-        for m2m_field in obj._meta.local_many_to_many:
-
-            m2m_field_obj = getattr(obj, m2m_field.name)
-            for o in m2m_field_obj.all():
+        for m2m_field in obj._meta.local_many_to_many:  # 把对象的所有直接关联的字段取出来
+            m2m_field_obj = getattr(obj, m2m_field.name)  # getattr(customer,'tag')
+            for o in m2m_field_obj.all():  # customer.tag.all()
                 sub_li_ele = "<li>%s: %s</li>" % (m2m_field.verbose_name, o.__str__())
                 sub_ul_ele += sub_li_ele
             sub_ul_ele += "</ul>"
             ul_ele += sub_ul_ele
         for related_obj in obj._meta.related_objects:
-            if "ManyToOneRel" not in related_obj.__repr__():
-                continue
-            if hasattr(obj, related_obj.get_accessor_name()):
+            if "ManyToManyRel" not in related_obj.__repr__():
+                if hasattr(obj, related_obj.get_accessor_name()):
+                    accessor_obj = getattr(obj, related_obj.get_accessor_name())
+                    if hasattr(accessor_obj, 'all'):
+                        target_objs = accessor_obj.all()
+                        sub_ul_ele = "<ul style='color:red'>"
+                        for i in target_objs:
+                            sub_li_ele = "<li>%s: %s</li>" % (i._meta.verbose_name, i.__str__())
+                            sub_ul_ele += sub_li_ele
+                        sub_ul_ele += "</ul>"
+                        ul_ele += sub_ul_ele
+            elif hasattr(obj, related_obj.get_accessor_name()):
                 accessor_obj = getattr(obj, related_obj.get_accessor_name())
 
                 if hasattr(accessor_obj, 'all'):

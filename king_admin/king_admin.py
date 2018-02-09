@@ -14,7 +14,11 @@ class BaseAdmin(object):
     list_per_page = 5  # 单页数量
     search_fields = []  # 可搜索字段
     ordering = None  # 按照哪个排序
-    filter_horizontal = []   # 外键复选框
+    filter_horizontal = []  # 外键复选框
+
+
+class UserProfileAdmin(BaseAdmin):
+    list_display = ['user', "name"]
 
 
 class CustomerAdmin(BaseAdmin):
@@ -24,7 +28,7 @@ class CustomerAdmin(BaseAdmin):
     list_per_page = 5
     ordering = 'date'
     filter_horizontal = ['tag']
-  
+
 
 class CustomerFollowUpAdmin(BaseAdmin):
     list_display = ['customer', 'consultant', 'date']
@@ -40,3 +44,4 @@ def register(model_class, admin_class=None):
 
 register(models.Customer, CustomerAdmin)
 register(models.CustomerFollowUp, CustomerFollowUpAdmin)
+register(models.UserProfile, UserProfileAdmin)

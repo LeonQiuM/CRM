@@ -92,8 +92,12 @@ def table_obj_delete(request, app, table, id):
     :param request:
     :return:
     """
+
     admin_class = king_admin.enabled_admins[app][table]
     obj = admin_class.model.objects.get(id=id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect(reverse('table_objs', kwargs={"app": app, "table": table}))
     return render(request, "king_admin/table_obj_delete.html", locals())
 
 
