@@ -71,9 +71,12 @@
                         <hr>
                     {% endfor %}
                     <div class="form-group">
-                        <div class="col-md-2">
-                            <a class="btn btn-danger" type="button" href="{% url 'obj_delete' app table form_obj.instance.id %}" >delete</a>
-                        </div>
+                        {% block obj_delete %}
+                            <div class="col-md-2">
+                                <a class="btn btn-danger" type="button"
+                                   href="{% url 'obj_delete' app table form_obj.instance.id %}">delete</a>
+                            </div>
+                        {% endblock %}
                         <div class="col-md-10">
                             <button type="submit" class="btn btn-success pull-right" value="save">save</button>
                         </div>
@@ -92,10 +95,8 @@
         }
 
         function selectedAllOptions() {
-
-            $('.select_choose option').prop("selected",true)
-
-
+            $('.select_choose option').prop("selected", true);
+            $(':disabled').removeAttr('disabled');
         }
     </script>
 {% endblock %}

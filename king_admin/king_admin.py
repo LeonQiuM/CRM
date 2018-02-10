@@ -6,6 +6,8 @@
 from crm import models
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.utils.translation import gettext as _
+from django.forms import ValidationError
 
 enabled_admins = {}
 
@@ -17,6 +19,7 @@ class BaseAdmin(object):
     search_fields = []  # 可搜索字段
     ordering = None  # 按照哪个排序
     filter_horizontal = []  # 外键复选框
+    readonly_fields = []  # 不可编辑字段
     actions = ['delete_selected_objs']
 
     def delete_selected_objs(self, request, query_sets):
@@ -31,6 +34,13 @@ class BaseAdmin(object):
         action = request._admin_action
         return render(request, 'king_admin/table_obj_delete.html', locals())
 
+    def default_form_validation(self):
+        """
+        用户在此自定义自己的表单验证，等同 django form 的 clean 方法
+        :return:
+        """
+        pass
+
 
 class UserProfileAdmin(BaseAdmin):
     list_display = ['user', "name"]
@@ -43,11 +53,21 @@ class CustomerAdmin(BaseAdmin):
     list_per_page = 5
     ordering = 'date'
     filter_horizontal = ['tag']
+    readonly_fields = ['qq', 'consultant']
     actions = ['delete_selected_objs', 'test']
 
     def test(self, request, query_sets):
         """测试动作"""
         print("in test")
+
+    def default_form_validation(self):
+        consult_content = self.cleaned_data.get('content')
+        if len(consult_content) < 5:
+            return self.ValidationError(
+                _('field %(value)s len >= 5'),
+                code="invalid",
+                params={"value": consult_content}
+            )
 
 
 class CustomerFollowUpAdmin(BaseAdmin):
