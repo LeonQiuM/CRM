@@ -22,6 +22,9 @@ def create_model_form(request, admin_class):
             field_obj.widget.attrs['class'] = "form-control"
             if field_name in admin_class.readonly_fields:
                 field_obj.widget.attrs['disabled'] = 'disabled'
+            if hasattr(admin_class, "clean_%s" % field_name):
+                field_clean_func = getattr(admin_class, "clean_%s" % field_name)
+                setattr(cls, "clean_%s" % field_name, field_clean_func)
         return forms.ModelForm.__new__(cls)
 
     def default_clean(self):
@@ -51,6 +54,7 @@ def create_model_form(request, admin_class):
     class Meta:
         model = admin_class.model
         fields = "__all__"
+        exclude = admin_class.form_exclude_fields
 
     attrs = {"Meta": Meta}
     _model_form_class = type("DynamicModelForm", (forms.ModelForm,), attrs)

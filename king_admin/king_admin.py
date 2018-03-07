@@ -21,6 +21,7 @@ class BaseAdmin(object):
     filter_horizontal = []  # 外键复选框
     readonly_fields = []  # 不可编辑字段
     actions = ['delete_selected_objs']
+    form_exclude_fields = []
 
     def delete_selected_objs(self, request, query_sets):
         objs = query_sets
@@ -43,7 +44,9 @@ class BaseAdmin(object):
 
 
 class UserProfileAdmin(BaseAdmin):
-    list_display = ['user', "name"]
+    list_display = ['email', "name"]
+    readonly_fields = ['password']
+    form_exclude_fields = ['last_login']
 
 
 class CustomerAdmin(BaseAdmin):
@@ -68,6 +71,11 @@ class CustomerAdmin(BaseAdmin):
                 code="invalid",
                 params={"value": consult_content}
             )
+
+    def clean_name(self):
+        print("name clean validation", self.cleaned_data['name'])
+        if not self.cleaned_data['name']:
+            self.add_erroe('name', 'cannot be null')
 
 
 class CustomerFollowUpAdmin(BaseAdmin):

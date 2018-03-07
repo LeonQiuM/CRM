@@ -6,5 +6,6 @@ urlpatterns = [
     url(r'^(?P<app>\w+)/(?P<table>\w+)/$', views.display_table_objs, name='table_objs'),
     url(r'^(?P<app>\w+)/(?P<table>\w+)/add/$', views.table_obj_add, name='table_obj_add'),
     url(r'^(?P<app>\w+)/(?P<table>\w+)/(?P<id>\d+)/change/$', views.table_obj_change, name='table_obj_change'),
+    url(r'^(?P<app>\w+)/(?P<table>\w+)/(?P<id>\d+)/change/password/$', views.password_change, name='obj_change_password'),
     url(r'^(?P<app>\w+)/(?P<table>\w+)/(?P<id>\d+)/delete/$', views.table_obj_delete, name='obj_delete'),
 ]

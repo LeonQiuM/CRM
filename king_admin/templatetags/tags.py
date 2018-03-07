@@ -152,7 +152,7 @@ def build_paginators(query_sets, filter_conditions, previous_order, search_key):
                 flag_display = True
                 page_btns += "<li><a>...</a></li>"
     page_btns += last_page_btn
-    page_btns += """<li><a href="?page=99999999%s">首页</a></li>""" % (filters)
+    page_btns += """<li><a href="?page=99999999%s">尾页</a></li>""" % (filters)
     return mark_safe(page_btns)
 
 

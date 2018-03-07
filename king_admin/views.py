@@ -1,13 +1,14 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.core.urlresolvers import reverse
 from king_admin import king_admin, forms
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from king_admin.utils import table_filter, table_sort, table_search
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 
-
+@login_required
 def index(request):
     """
 
@@ -25,6 +26,7 @@ def index(request):
         pass
 
 
+@login_required
 def display_table_objs(request, app, table):
     """
 
@@ -70,6 +72,7 @@ def display_table_objs(request, app, table):
         pass
 
 
+@login_required
 def table_obj_change(request, app, table, id):
     """
 
@@ -94,21 +97,45 @@ def table_obj_change(request, app, table, id):
         pass
 
 
+@login_required
+def password_change(request, app, table, id):
+    admin_class = king_admin.enabled_admins[app][table]
+    model_form_class = forms.create_model_form(request, admin_class)
+    query_set = admin_class.model.objects.get(id=id)
+
+    if request.method == "POST":
+        errors = {}
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        if password1 == password2:
+            if len(password1) >= 6:
+                # 更新密码
+                query_set.set_password(password1)
+                query_set.save()
+            else:
+                errors['invalid'] = "password length is too short"
+            return redirect("table_obj_change", app=app, table=table, id=id)
+        else:
+            errors['invalid'] = "diff password"
+    return render(request, 'king_admin/password_reset.html', locals())
+
+
+@login_required
 def table_obj_delete(request, app, table, id):
     """
 
     :param request:
     :return:
     """
-
     admin_class = king_admin.enabled_admins[app][table]
     obj = admin_class.model.objects.get(id=id)
     if request.method == "POST":
         obj.delete()
-        return redirect(reverse('table_objs', kwargs={"app": app, "table": table}))
+        return redirect('table_objs', app=app, table=table)
     return render(request, "king_admin/table_obj_delete.html", locals())
 
 
+@login_required
 def table_obj_add(request, app, table):
     """
 
@@ -121,7 +148,7 @@ def table_obj_add(request, app, table):
         form_obj = model_form_class(request.POST)
         if form_obj.is_valid():
             form_obj.save()
-            return redirect(reverse('table_objs', kwargs={"app": app, "table": table}))
+            return redirect('table_objs', app=app, table=table)
     else:
 
         form_obj = model_form_class()

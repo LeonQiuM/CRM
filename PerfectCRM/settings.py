@@ -24,6 +24,10 @@ SECRET_KEY = 'pn8pypw_umqd=0mua@22ubd_)!pavbbl)so=t$5nnl)wn)m*(-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = 'crm.UserProfile'
+
+LOGIN_URL = '/account/login/'
+
 ALLOWED_HOSTS = []
 
 # Application definition
